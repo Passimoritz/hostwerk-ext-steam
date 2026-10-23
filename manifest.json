@@ -1,0 +1,208 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Passimoritz/hostwerk-public/main/sdk/manifest.schema.json",
+  "id": "steam",
+  "name": {
+    "de": "Steam & Spiele",
+    "en": "Steam & games"
+  },
+  "description": {
+    "de": "Deine Steam-Bibliothek ohne Anmeldung: Spiele, Größe, Laufwerk, Spielzeit und laufende Downloads. Dazu ein Speicher-Doktor, der zeigt, was Platz frisst, Spielstand-Sicherung nach jeder Sitzung (Ludusavi-Liste), Preisalarm für deine Merkliste, Spielzeit-Statistik, Screenshots, „Was spiele ich heute?“ und eigene Server zu deinen Spielen mit einem Klick.",
+    "en": "Your Steam library without signing in: games, size, drive, playtime and running downloads. Plus a storage doctor that shows what eats space, save backups after every session (Ludusavi index), price alerts for your watchlist, playtime statistics, screenshots, “What should I play tonight?” and your own server for your games in one click."
+  },
+  "version": "1.0.0",
+  "author": "Hostwerk",
+  "homepage": "https://github.com/Passimoritz/hostwerk-ext-steam",
+  "license": "MIT",
+  "icon": "icon.svg",
+  "banner": "banner.svg",
+  "color": "#1e6fd9",
+  "category": "games",
+  "hostwerk": ">=3.0.0",
+  "sdkVersion": "3.3",
+  "permissions": [
+    "native",
+    "network",
+    "read:games"
+  ],
+  "network": [
+    "https://store.steampowered.com",
+    "https://api.steampowered.com",
+    "https://shared.akamai.steamstatic.com",
+    "https://cdn.cloudflare.steamstatic.com",
+    "https://raw.githubusercontent.com"
+  ],
+  "page": {
+    "title": {
+      "de": "Spiele",
+      "en": "Games"
+    },
+    "description": {
+      "de": "Deine Steam-Bibliothek, Spielstände und Angebote.",
+      "en": "Your Steam library, saves and deals."
+    },
+    "icon": "gamepad",
+    "nav": {
+      "group": "server",
+      "after": "mc"
+    }
+  },
+  "backend": "server/index.js",
+  "ui": "ui/index.js",
+  "settings": [
+    {
+      "key": "autoBackup",
+      "type": "switch",
+      "label": {
+        "de": "Spielstände nach jedem Spielen sichern",
+        "en": "Back up saves after every session"
+      },
+      "default": true
+    },
+    {
+      "key": "includeConfig",
+      "type": "switch",
+      "label": {
+        "de": "Auch Spiel-Einstellungen sichern",
+        "en": "Also back up game settings"
+      },
+      "default": false
+    },
+    {
+      "key": "keep",
+      "type": "number",
+      "label": {
+        "de": "Automatische Sicherungen je Spiel behalten",
+        "en": "Automatic backups to keep per game"
+      },
+      "default": 15,
+      "min": 3,
+      "max": 100
+    },
+    {
+      "key": "notifyDeals",
+      "type": "switch",
+      "label": {
+        "de": "Bei Angeboten auf der Merkliste benachrichtigen",
+        "en": "Notify me about deals on the watchlist"
+      },
+      "default": true
+    },
+    {
+      "key": "country",
+      "type": "select",
+      "label": {
+        "de": "Land für Preise",
+        "en": "Country for prices"
+      },
+      "default": "DE",
+      "options": [
+        {
+          "value": "DE",
+          "label": "DE"
+        },
+        {
+          "value": "AT",
+          "label": "AT"
+        },
+        {
+          "value": "CH",
+          "label": "CH"
+        },
+        {
+          "value": "NL",
+          "label": "NL"
+        },
+        {
+          "value": "FR",
+          "label": "FR"
+        },
+        {
+          "value": "IT",
+          "label": "IT"
+        },
+        {
+          "value": "ES",
+          "label": "ES"
+        },
+        {
+          "value": "PL",
+          "label": "PL"
+        },
+        {
+          "value": "GB",
+          "label": "GB"
+        },
+        {
+          "value": "US",
+          "label": "US"
+        },
+        {
+          "value": "CA",
+          "label": "CA"
+        },
+        {
+          "value": "AU",
+          "label": "AU"
+        }
+      ]
+    },
+    {
+      "key": "dormantDays",
+      "type": "number",
+      "label": {
+        "de": "„Lange nicht gespielt“ ab Tagen",
+        "en": "“Long unplayed” after days"
+      },
+      "default": 180,
+      "min": 30,
+      "max": 2000
+    },
+    {
+      "key": "steamPath",
+      "type": "text",
+      "label": {
+        "de": "Steam-Ordner (leer = automatisch finden)",
+        "en": "Steam folder (empty = find automatically)"
+      },
+      "default": ""
+    }
+  ],
+  "synergies": [
+    {
+      "with": "game-servers",
+      "title": {
+        "de": "Eigener Server zu deinen Spielen",
+        "en": "Your own server for your games"
+      },
+      "text": {
+        "de": "Erkennt, welche deiner Steam-Spiele einen eigenen Server haben, und richtet ihn mit einem Klick ein – als Reiter „Deine Spiele“ unter Spiele-Server.",
+        "en": "Finds which of your Steam games have a dedicated server and sets it up in one click – as the tab “Your games” under Game servers."
+      }
+    },
+    {
+      "with": "cloud-backup",
+      "title": {
+        "de": "Spielstände außer Haus",
+        "en": "Saves off-site"
+      },
+      "text": {
+        "de": "Die Spielstand-Sicherungen landen in der Sicherungs-Zentrale und damit auch in der externen Sicherung.",
+        "en": "Save backups show up in the backup center and with it in the external backup."
+      }
+    },
+    {
+      "with": "discord-status",
+      "title": {
+        "de": "Was du gerade spielst",
+        "en": "What you are playing"
+      },
+      "text": {
+        "de": "Bietet ctx.steamLibrary an: installierte Spiele und das Spiel, das gerade läuft.",
+        "en": "Offers ctx.steamLibrary: installed games and the game running right now."
+      }
+    }
+  ],
+  "provides": [
+    "steamLibrary"
+  ]
+}

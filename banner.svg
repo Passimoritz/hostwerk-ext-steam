@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 400" role="img" aria-hidden="true">
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0b1e3a"/><stop offset=".62" stop-color="#144383"/><stop offset="1" stop-color="#1e6fd9"/></linearGradient>
+<radialGradient id="o1"><stop offset="0" stop-color="#5693e3" stop-opacity=".55"/><stop offset="1" stop-color="#5693e3" stop-opacity="0"/></radialGradient>
+<radialGradient id="o2"><stop offset="0" stop-color="#ffffff" stop-opacity=".22"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></radialGradient>
+<pattern id="dots" width="28" height="28" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.3" fill="#ffffff" fill-opacity=".09"/></pattern>
+<linearGradient id="glass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".22"/><stop offset="1" stop-color="#ffffff" stop-opacity=".06"/></linearGradient>
+<linearGradient id="fade" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#000" stop-opacity=".35"/><stop offset=".55" stop-color="#000" stop-opacity="0"/></linearGradient>
+</defs>
+<style>.b1,.b2,.f,.s,.k{transform-box:fill-box;transform-origin:50% 50%}
+@keyframes b1{to{transform:translate(-90px,40px) scale(1.15)}}@keyframes b2{to{transform:translate(70px,-30px) scale(.9)}}
+@keyframes f{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes s{0%,100%{opacity:.25;transform:scale(.5) rotate(0)}50%{opacity:.95;transform:scale(1) rotate(45deg)}}
+@keyframes k{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.b1{animation:b1 16s ease-in-out infinite alternate}.b2{animation:b2 19s ease-in-out infinite alternate}
+.f{animation:f 9s ease-in-out infinite}.f1{animation-duration:11s;animation-delay:-3s}.f2{animation-duration:13s;animation-delay:-6s}
+.s{animation:s 3.4s ease-in-out infinite}.k{animation:k 6s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.b1,.b2,.f,.s,.k{animation:none!important}}</style>
+<rect width="1280" height="400" fill="url(#bg)"/>
+<circle class="b1" cx="1020" cy="80" r="300" fill="url(#o1)"/>
+<circle class="b2" cx="260" cy="380" r="260" fill="url(#o2)"/>
+<rect width="1280" height="400" fill="url(#dots)"/>
+<rect width="1280" height="400" fill="url(#fade)"/>
+<g transform="translate(150 92) rotate(-8) scale(2.2)"><g class="f f0" fill="none" stroke="#ffffff" stroke-opacity=".13" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 16h.01"/><path d="M2.212 11.577a2 2 0 0 0-.212.896V18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-5.527a2 2 0 0 0-.212-.896L18.55 5.11A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/><path d="M21.946 12.013H2.054"/><path d="M6 16h.01"/></g></g>
+<g transform="translate(380 268) rotate(6) scale(1.8)"><g class="f f1" fill="none" stroke="#ffffff" stroke-opacity=".13" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></g></g>
+<g transform="translate(640 70) rotate(-4) scale(1.5)"><g class="f f2" fill="none" stroke="#ffffff" stroke-opacity=".13" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></g></g>
+<g class="k">
+<rect x="882" y="92" width="216" height="216" rx="54" fill="url(#glass)" stroke="#ffffff" stroke-opacity=".28" stroke-width="2"/>
+<g transform="translate(918 128) scale(6)" fill="none" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 17a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-2Z"/><path d="M6 15v-2"/><path d="M12 15V9"/><circle cx="12" cy="6" r="3"/></g>
+</g>
+<g transform="translate(1040 74) scale(0.9)"><path class="s" style="animation-delay:0s" d="M0 -10 C1.2 -2.6 2.6 -1.2 10 0 C2.6 1.2 1.2 2.6 0 10 C-1.2 2.6 -2.6 1.2 -10 0 C-2.6 -1.2 -1.2 -2.6 0 -10Z" fill="#ffffff"/></g><g transform="translate(1170 300) scale(0.6)"><path class="s" style="animation-delay:1.1s" d="M0 -10 C1.2 -2.6 2.6 -1.2 10 0 C2.6 1.2 1.2 2.6 0 10 C-1.2 2.6 -2.6 1.2 -10 0 C-2.6 -1.2 -1.2 -2.6 0 -10Z" fill="#ffffff"/></g><g transform="translate(860 320) scale(0.5)"><path class="s" style="animation-delay:2.2s" d="M0 -10 C1.2 -2.6 2.6 -1.2 10 0 C2.6 1.2 1.2 2.6 0 10 C-1.2 2.6 -2.6 1.2 -10 0 C-2.6 -1.2 -1.2 -2.6 0 -10Z" fill="#ffffff"/></g><g transform="translate(560 150) scale(0.45)"><path class="s" style="animation-delay:0.6s" d="M0 -10 C1.2 -2.6 2.6 -1.2 10 0 C2.6 1.2 1.2 2.6 0 10 C-1.2 2.6 -2.6 1.2 -10 0 C-2.6 -1.2 -1.2 -2.6 0 -10Z" fill="#ffffff"/></g>
+</svg>
