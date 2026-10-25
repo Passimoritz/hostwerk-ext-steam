@@ -110,8 +110,11 @@ test('Steam finden: Registry, Standardordner, Linux mit Flatpak, eigener Ordner 
   const def = await loc.findSteam({ platform: 'linux', home, env: {} });
   assert.ok(def && def.root.endsWith('Steam'));
   assert.strictEqual(await loc.findSteam({ platform: 'linux', home: tmpDir('leer'), env: {} }), null);
-  const viaReg = await loc.findSteam({ platform: 'win32', env: {}, reg: async () => ({ SteamPath: f.root }) });
-  assert.strictEqual(viaReg.source, 'registry');
+  // Registry-Pfad wird mit Windows-Regeln normalisiert – auf Linux (GitHub-Action) wäre der Testordner dann ein \-Pfad
+  if (process.platform === 'win32') {
+    const viaReg = await loc.findSteam({ platform: 'win32', env: {}, reg: async () => ({ SteamPath: f.root }) });
+    assert.strictEqual(viaReg.source, 'registry');
+  }
 });
 
 test('reg query lesen und Laufzustand (Windows-Registry, Linux registry.vdf)', async () => {
