@@ -88,6 +88,8 @@ function routes(host, svc) {
 exports.activate = (host) => {
   const svc = createService(host);
   routes(host, svc);
+  // 2.0: Konten (Steam-Anmeldung, itch.io) und weitere Shops (Epic, GOG) – server/accounts.js
+  if (typeof host.core === 'function' && host.publicRouter) require('./accounts').mount(host, svc, { open: (url) => svc.open(url), openDir: (dir) => svc.open(dir) });
   // Für andere Erweiterungen (z. B. Discord-Status, Kacheln): nur lesend, ohne Pfade
   try {
     host.provide('steamLibrary', {

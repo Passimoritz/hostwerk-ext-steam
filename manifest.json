@@ -2,14 +2,14 @@
   "$schema": "https://raw.githubusercontent.com/Passimoritz/hostwerk-public/main/sdk/manifest.schema.json",
   "id": "steam",
   "name": {
-    "de": "Steam & Spiele",
-    "en": "Steam & games"
+    "de": "Spielebibliothek",
+    "en": "Game library"
   },
   "description": {
-    "de": "Deine Steam-Bibliothek ohne Anmeldung: Spiele, Größe, Laufwerk, Spielzeit und laufende Downloads. Dazu ein Speicher-Doktor, der zeigt, was Platz frisst, Spielstand-Sicherung nach jeder Sitzung (Ludusavi-Liste), Preisalarm für deine Merkliste, Spielzeit-Statistik, Screenshots, „Was spiele ich heute?“ und eigene Server zu deinen Spielen mit einem Klick.",
-    "en": "Your Steam library without signing in: games, size, drive, playtime and running downloads. Plus a storage doctor that shows what eats space, save backups after every session (Ludusavi index), price alerts for your watchlist, playtime statistics, screenshots, “What should I play tonight?” and your own server for your games in one click."
+    "de": "Alle deine Spiele an einem Ort: Steam ohne Anmeldung (Spiele, Größe, Laufwerk, Spielzeit, Downloads), dazu Epic Games und GOG vom PC und – einmal verbunden – deine gekauften Spiele aus dem Steam-Konto (offizielle Steam-Anmeldung) und von itch.io. Mit Speicher-Doktor, Spielstand-Sicherung nach jeder Sitzung (Ludusavi-Liste), Preisalarm für die Merkliste, Spielzeit-Statistik, Screenshots, „Was spiele ich heute?“ und eigenen Servern zu deinen Spielen mit einem Klick.",
+    "en": "All your games in one place: Steam without signing in (games, size, drive, playtime, downloads), plus Epic Games and GOG from this PC and – once connected – the games you own in your Steam account (official Steam sign-in) and on itch.io. With a storage doctor, save backups after every session (Ludusavi index), price alerts for your watchlist, playtime statistics, screenshots, “What should I play tonight?” and your own server for your games in one click."
   },
-  "version": "1.0.1",
+  "version": "2.0.0",
   "author": "Hostwerk",
   "homepage": "https://github.com/Passimoritz/hostwerk-ext-steam",
   "license": "MIT",
@@ -18,7 +18,7 @@
   "color": "#1e6fd9",
   "category": "games",
   "hostwerk": ">=3.0.0",
-  "sdkVersion": "3.3",
+  "sdkVersion": "3.8",
   "permissions": [
     "native",
     "network",
@@ -29,16 +29,18 @@
     "https://api.steampowered.com",
     "https://shared.akamai.steamstatic.com",
     "https://cdn.cloudflare.steamstatic.com",
-    "https://raw.githubusercontent.com"
+    "https://raw.githubusercontent.com",
+    "https://steamcommunity.com",
+    "https://api.itch.io"
   ],
   "page": {
     "title": {
-      "de": "Steam",
-      "en": "Steam"
+      "de": "Spielebibliothek",
+      "en": "Game library"
     },
     "description": {
-      "de": "Deine Steam-Bibliothek, Spielstände und Angebote.",
-      "en": "Your Steam library, saves and deals."
+      "de": "Deine Spiele aus Steam, Epic, GOG und itch.io – mit Spielständen, Angeboten und Konten.",
+      "en": "Your games from Steam, Epic, GOG and itch.io – with saves, deals and accounts."
     },
     "icon": "gamepad",
     "nav": {

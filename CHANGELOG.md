@@ -1,3 +1,7 @@
+## 2.0.0
+
+- Now “Game library”: besides Steam also Epic Games and GOG from this PC, and – connected once in the new tab “Accounts” – the games in your Steam account (official Steam sign-in plus your own Web API key) and on itch.io (API key). Games you own but have not installed appear under “More games” with install, play and folder buttons. Keys are stored encrypted only and never reach the browser; everything refreshes by itself every 6 hours. / Jetzt „Spielebibliothek“: neben Steam auch Epic Games und GOG vom PC und – einmal im neuen Reiter „Konten“ verbunden – die Spiele aus deinem Steam-Konto (offizielle Steam-Anmeldung plus eigener Web-API-Schlüssel) und von itch.io (API-Schlüssel). Gekaufte, nicht installierte Spiele stehen unter „Weitere Spiele“ mit Knöpfen zum Installieren, Spielen und Ordner öffnen. Schlüssel liegen nur verschlüsselt und kommen nie im Browser an; alles frischt sich alle 6 Stunden selbst auf.
+
 ## 1.0.1
 
 - New animated icon and banner in the common Hostwerk style (isometric block). / Neues animiertes Symbol und Banner im gemeinsamen Hostwerk-Stil (isometrischer Block).

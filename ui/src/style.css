@@ -122,3 +122,12 @@
 .st-tile-last-art { width: 56px; border-radius: var(--r-md); flex-shrink: 0; }
 .st-tile-last-text { gap: 2px; min-width: 0; }
 .st-tile-dl { gap: var(--sp-1); }
+
+/* 2.0: Konten und weitere Shops */
+.st-acc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: var(--sp-3); }
+.st-acc-key { align-items: flex-end; }
+.st-acc-key .grow { min-width: 0; }
+.st-other { margin-top: var(--sp-4); }
+.st-other-list { display: flex; flex-direction: column; max-height: 480px; overflow: auto; }
+.st-other-row { display: flex; align-items: center; gap: var(--sp-2); min-width: 0; }
+.st-other-row .ellipsis { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

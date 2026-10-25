@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Gamepad2, HardDrive, Save, Tag, BarChart3, Image as ImageIcon, Dices, RefreshCw, Library, Settings, Server, Download, Play, Users, CircleOff } from 'lucide-react';
+import { Gamepad2, HardDrive, Save, Tag, BarChart3, Image as ImageIcon, Dices, RefreshCw, Library, Settings, Server, Download, Play, Users, CircleOff, KeyRound } from 'lucide-react';
 import { useApi, put, post } from '@hostwerk/api';
 import { Btn, Tabs, Empty, Loading, TileEmpty, InfoTip, Progress, toast } from '@hostwerk/ui';
 import { t, pl } from '@hostwerk/i18n';
@@ -10,10 +10,11 @@ import { SavesTab } from './saves';
 import { DealsTab } from './deals';
 import { StatsTab, ShotsTab } from './stats';
 import { PicksSheet } from './picks';
+import { AccountsTab, OtherGames } from './accounts';
 import './style.css';
 
 /*
- * Steam & Spiele: eigene Seite mit Reitern (Bibliothek, Speicher, Spielstände, Angebote, Statistik, Screenshots),
+ * Spielebibliothek: eigene Seite mit Reitern (Bibliothek, Speicher, Spielstände, Angebote, Statistik, Screenshots, Konten),
  * dazu eine Kachel für die Übersicht und der Reiter „Deine Spiele“ im Bereich Spiele-Server (eigener Server je Spiel).
  * Texte englisch, Deutsch aus locales/de.json.
  */
@@ -24,13 +25,14 @@ const TABS = [
   { id: 'deals', label: 'Deals', icon: Tag },
   { id: 'stats', label: 'Statistics', icon: BarChart3 },
   { id: 'screenshots', label: 'Screenshots', icon: ImageIcon },
+  { id: 'accounts', label: 'Accounts', icon: KeyRound },
 ];
 
 function NotFound({ d, reload }) {
   return (
     <Empty icon={CircleOff} title="Steam was not found on this PC"
       text={d.platform === 'linux' ? 'Hostwerk looked in ~/.steam, ~/.local/share/Steam, Flatpak and Snap. Installed somewhere else? Enter the folder in the extension’s settings.' : 'Hostwerk looked in the registry and in the usual folders. Installed somewhere else? Enter the folder in the extension’s settings.'}
-      action={<><a className="btn" href="#/settings/erweiterungen"><Settings size={14} aria-hidden="true" />{t('Settings')}</a> <Btn icon={RefreshCw} onClick={reload}>Search again</Btn></>} />
+      action={<><a className="btn" href="#/settings/erweiterungen"><Settings size={14} aria-hidden="true" />{t('Settings')}</a> <Btn icon={RefreshCw} onClick={reload}>Search again</Btn> <Btn icon={KeyRound} onClick={() => go('accounts')}>Other stores and accounts</Btn></>} />
   );
 }
 
@@ -56,8 +58,8 @@ export function SteamPage({ path = [] }) {
   const head = (
     <div className="page-head">
       <div>
-        <h1><Gamepad2 size={22} /> Games</h1>
-        <p>Your Steam library, saves and deals – read from this PC, no sign-in.</p>
+        <h1><Gamepad2 size={22} /> Game library</h1>
+        <p>Your games from Steam, Epic, GOG and itch.io – with saves, deals and your accounts.</p>
       </div>
       <div className="actions">
         {x && x.found && <RunLine d={x} />}
@@ -73,14 +75,15 @@ export function SteamPage({ path = [] }) {
     </div>
   );
   if (!x) return <div className="page">{head}{d.error ? <Empty icon={Gamepad2} title="The library could not be read" text={d.error} action={<Btn icon={RefreshCw} onClick={() => d.reload()}>Try again</Btn>} /> : <Loading />}</div>;
-  if (!x.found) return <div className="page">{head}<NotFound d={x} reload={rescan} /></div>;
+  if (!x.found) return <div className="page">{head}{tab === 'accounts' ? <AccountsTab /> : <><NotFound d={x} reload={rescan} /><OtherGames /></>}</div>;
   const tabs = TABS.map((y) => ({ ...y, label: t(y.label), badge: y.id === 'library' ? x.totals.games : undefined }));
   return (
     <div className="page fade-in st-page">
       {head}
       <Tabs value={tab} onChange={go} tabs={tabs} />
       <div className="st-body">
-        {tab === 'library' && <LibraryTab d={x} />}
+        {tab === 'library' && <><LibraryTab d={x} /><OtherGames /></>}
+        {tab === 'accounts' && <AccountsTab />}
         {tab === 'storage' && <StorageTab d={x} />}
         {tab === 'saves' && <SavesTab />}
         {tab === 'deals' && <DealsTab />}
