@@ -4,7 +4,9 @@
 
 Your Steam library without signing in: games, size, drive, playtime and running downloads. Plus a storage doctor that shows what eats space, save backups after every session (Ludusavi list), price alerts for your watchlist, playtime statistics, screenshots, “What should I play tonight?” and your own server for your games in one click.
 
-[Deutsch](README.de.md) · An official [Hostwerk](https://github.com/Passimoritz/hostwerk-public) extension (SDK 3.3, native extension)
+[Deutsch](README.de.md) · An official [Hostwerk](https://github.com/Passimoritz/hostwerk-public) extension (native extension, Hostwerk 3.0 or newer)
+
+![Screenshot](docs/screenshot.png)
 
 ## What it does
 

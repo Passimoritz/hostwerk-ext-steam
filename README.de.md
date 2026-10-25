@@ -4,7 +4,9 @@
 
 Deine Steam-Bibliothek ohne Anmeldung: Spiele, Größe, Laufwerk, Spielzeit und laufende Downloads. Dazu ein Speicher-Doktor, der zeigt, was Platz frisst, Spielstand-Sicherung nach jeder Sitzung (Ludusavi-Liste), Preisalarm für deine Merkliste, Spielzeit-Statistik, Screenshots, „Was spiele ich heute?“ und eigene Server zu deinen Spielen mit einem Klick.
 
-[English](README.md) · Eine offizielle [Hostwerk](https://github.com/Passimoritz/hostwerk-public) Erweiterung (SDK 3.3, native Erweiterung)
+[English](README.md) · Offizielle [Hostwerk](https://github.com/Passimoritz/hostwerk-public)-Erweiterung (native Erweiterung, ab Hostwerk 3.0)
+
+![Bildschirmfoto](docs/screenshot.de.png)
 
 ## Was sie kann
 
