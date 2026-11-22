@@ -359,10 +359,27 @@
   "Connect your accounts once – Hostwerk keeps them up to date by itself. Only official ways of the providers that do not expire; keys stay encrypted on this PC.": "Verbinde deine Konten einmal – Hostwerk hält sie selbst aktuell. Nur offizielle Wege der Anbieter, die nicht ablaufen; Schlüssel bleiben verschlüsselt auf diesem PC.",
   "Steam gives every account a free key. Enter any domain name (for example “localhost”). The key does not expire; you can revoke it there at any time.": "Steam gibt jedem Konto einen kostenlosen Schlüssel. Als Domain reicht ein beliebiger Name (zum Beispiel „localhost“). Der Schlüssel läuft nicht ab; du kannst ihn dort jederzeit zurückziehen.",
   "connected": "verbunden",
+  "The Steam folder from the settings was not found": "Der Steam-Ordner aus den Einstellungen wurde nicht gefunden",
+  "Hostwerk uses the Steam installation it found by itself: {dir}": "Hostwerk nutzt die selbst gefundene Steam-Installation: {dir}",
   "$patterns": [
     [
       "HTTP {}",
       "HTTP {}"
     ]
-  ]
+  ],
+  "Collapse": "Einklappen",
+  "Expand": "Aufklappen",
+  "{n} of {total} games match": "{n} von {total} Spielen passen",
+  "No installed game found.": "Kein installiertes Spiel gefunden.",
+  "Check": "Prüfen",
+  "Steam folder": "Steam-Ordner",
+  "Checks the “Steam folder” of the game library (empty = found automatically).": "Prüft den „Steam-Ordner“ der Spielebibliothek (leer = automatisch gefunden).",
+  "Steam found in this folder.": "Steam in diesem Ordner gefunden.",
+  "Steam found automatically:": "Steam automatisch gefunden:",
+  "{n} library": "{n} Bibliothek",
+  "{n} libraries": "{n} Bibliotheken",
+  "This folder does not exist.": "Diesen Ordner gibt es nicht.",
+  "There is no Steam in this folder (no “steamapps” folder) – choose the folder that contains steam.exe.": "In diesem Ordner liegt kein Steam (kein Ordner „steamapps“) – wähle den Ordner, in dem steam.exe liegt.",
+  "Hostwerk did not find Steam by itself – enter the folder in the field “Steam folder”.": "Hostwerk hat Steam nicht von selbst gefunden – trage den Ordner im Feld „Steam-Ordner“ ein.",
+  "Steam folder (game library)": "Steam-Ordner (Spielebibliothek)"
 }

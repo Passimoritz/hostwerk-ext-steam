@@ -31,7 +31,7 @@ export function PicksSheet({ onClose, games, serversAvailable }) {
   const [seed, setSeed] = useState(() => Date.now());
   const [r, setR] = useState(null);
   const [err, setErr] = useState(null);
-  useEffect(() => { let on = true; setR(null); get(`/steam/picks?mood=${mood}&seed=${seed}`).then((x) => on && setR(x)).catch((e) => on && setErr(e.message)); return () => { on = false; }; }, [mood, seed]);
+  useEffect(() => { let on = true; setR(null); setErr(null); get(`/steam/picks?mood=${mood}&seed=${seed}`).then((x) => on && setR(x)).catch((e) => on && setErr(e.message)); return () => { on = false; }; }, [mood, seed]);
   const byId = new Map((games || []).map((g) => [g.appid, g]));
   return (
     <Sheet title={t('What should I play tonight?')} subtitle={t('Three ideas from your own library')} onClose={onClose} size="wide"

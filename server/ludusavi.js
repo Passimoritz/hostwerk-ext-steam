@@ -74,8 +74,19 @@ class Manifest {
     const key = `${mtime}|${[...want].sort((a, b) => a - b).join(',')}`;
     if (this.memo && this.memo.key === key) return this.memo.map;
     const map = await scanStream(fs.createReadStream(this.file).pipe(zlib.createGunzip()), want);
-    this.memo = { key, map };
+    this.memo = { key, map, ids: want };
     return map;
+  }
+  /**
+   * Without waiting: Set of the given Steam IDs whose save location is known – from the last lookup, if it covered all of
+   * them; otherwise null (“not known yet”) and a lookup starts in the background for the next call.
+   */
+  knownNow(ids) {
+    const list = [...ids].map(Number).filter(Boolean);
+    const m = this.memo;
+    if (m && m.ids && list.every((id) => m.ids.has(id))) return new Set(list.filter((id) => m.map.has(id)));
+    if (!this._bg) this._bg = this.lookup(list).catch(() => null).finally(() => { this._bg = null; });
+    return null;
   }
 }
 

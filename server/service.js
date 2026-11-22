@@ -91,8 +91,10 @@ function createService(host, io = {}) {
       // Spielzeit buchen (Konto gewechselt → neu beginnen)
       const totals = {};
       for (const [id, v] of Object.entries(lib.playAll || {})) if (v.playtime) totals[id] = v.playtime;
-      if (stats.record(play, totals, { now: now(), user: lib.user }) > 0 || !play.last) writeJson(playFile, play);
-      else if (play.user !== lib.user) writeJson(playFile, play);
+      // Erster Stand bzw. anderes Konto: record() setzt nur den Ausgangsstand – vorher merken, sonst ginge er nach einem
+      // Neustart verloren (und Spielzeit dazwischen würde nie gebucht)
+      const fresh = !play.last || play.user !== lib.user;
+      if (stats.record(play, totals, { now: now(), user: lib.user }) > 0 || fresh) writeJson(playFile, play);
       if (before !== null && before !== sig(lib)) broadcast();
     } catch (e) { st.error = e.message; }
     st.scanAt = now();
@@ -153,7 +155,9 @@ function createService(host, io = {}) {
     const games = servers.gamesApi(io.games !== undefined ? { games: io.games } : ctx);
     if (!lib) return { found: false, platform, error: st.error, run: st.run, serversAvailable: !!games, settings: s };
     const matches = servers.match(lib, games);
-    const list = lib.games.map((g) => slimGame(g, matches));
+    // Save location known? (Ludusavi index, from the last lookup – the menu offers “Back up saves” only then)
+    const savesKnown = manifest.knownNow(lib.games.filter((g) => !g.tool).map((g) => g.appid));
+    const list = lib.games.map((g) => ({ ...slimGame(g, matches), savesKnown: savesKnown ? savesKnown.has(g.appid) : null }));
     const real = list.filter((g) => !g.tool);
     return {
       found: true, platform, install: { root: st.install.root, source: st.install.source }, run: st.run, user: lib.user, users: lib.users,
@@ -166,6 +170,8 @@ function createService(host, io = {}) {
         servers: real.filter((g) => g.server).length,
       },
       value: st.value, serversAvailable: !!games, offline: offline(), scanAt: st.scanAt, settings: { country: s.country, autoBackup: s.autoBackup },
+      // Eigener Steam-Ordner eingestellt, aber dort keine Steam-Installation → automatisch gefundene genutzt (sonst unbemerkt)
+      steamPathMissing: !!String(s.steamPath || '').trim() && st.install.source !== 'custom',
     };
   }
 
@@ -334,8 +340,10 @@ function createService(host, io = {}) {
     }
     const cache = io.imageCache !== undefined ? io.imageCache : ctx.imageCache;
     if (!cache || typeof cache.get !== 'function' || offline()) return null;
-    for (const h of STEAM_CDN) {
-      const hit = await cache.get(`${h}/${id}/${CDN_FILE[k]}`).catch(() => null);
+    // Beide Spiegel gleichzeitig fragen (nacheinander dauerte ein fehlendes Bild bis zu 2 × 15 s) – erster Treffer in Reihenfolge
+    const tries = STEAM_CDN.map((h) => Promise.resolve().then(() => cache.get(`${h}/${id}/${CDN_FILE[k]}`)).catch(() => null));
+    for (const p of tries) {
+      const hit = await p;
       if (hit) return hit;
     }
     return null;
@@ -353,7 +361,31 @@ function createService(host, io = {}) {
     return null;
   }
 
+  /**
+   * „Check“ in the settings: is there Steam in the folder from the settings (empty = what Hostwerk finds by itself)?
+   * → { custom, ok, reason?, root?, source?, libraries?, games? }
+   */
+  async function checkFolder() {
+    const custom = String(settings().steamPath || '').trim();
+    let found = null;
+    let reason = null;
+    if (custom) {
+      let dir = custom;
+      try { dir = fs.realpathSync(custom); } catch { reason = 'missing'; }
+      if (!reason) found = locate.isSteamDir(dir) ? { root: dir, source: 'custom' } : null;
+      if (!found && !reason) reason = 'not-steam';
+    } else {
+      found = io.find ? await io.find({ custom: '' }) : await locate.findSteam({ platform });
+      if (!found) reason = 'not-found';
+    }
+    if (!found) return { custom, ok: false, reason };
+    let libraries = null; let games = null;
+    try { const lib = io.scan ? io.scan(found.root, {}) : L.scanLibrary(found.root, {}); libraries = lib.libraries.length; games = lib.games.filter((g) => !g.tool).length; } catch { /* only the folder */ }
+    return { custom, ok: true, root: found.root, source: found.source, libraries, games };
+  }
+
   return {
+    checkFolder,
     scan, measure, view, slow, tick, art, savesView, saveDetail, backupGame, restore, backupSource, afterSession, folderFor, settings, prefsFile,
     doctor: async () => { await scan(); const s = settings(); return { ...diagnose({ lib: st.lib, drives: st.drives, leftovers: st.leftovers, now: now(), opts: { dormantDays: s.dormantDays } }), measured: st.drives.length > 0 }; },
     stats: async () => { await scan(); const names = {}; for (const g of (st.lib ? st.lib.games : [])) names[g.appid] = g.name; return { ...stats.summary(play, { now: now() }), names, total: st.lib ? st.lib.games.filter((g) => !g.tool).reduce((a, g) => a + (g.playtime || 0), 0) : 0 }; },

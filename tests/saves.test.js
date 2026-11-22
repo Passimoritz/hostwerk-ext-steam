@@ -99,6 +99,11 @@ test('Laden: einmal am Tag, mit If-None-Match, gepackt abgelegt, offline nicht',
   const map = await m.lookup([200, 100]);
   assert.strictEqual(map.get(200).name, 'Beta');
   assert.strictEqual(await m.lookup([200, 100]), map, 'gemerkt');
+  // Ohne Warten (Bibliothek/Rechtsklick): bekannt aus der letzten Suche – fehlt eine ID, erst null, dann im Hintergrund nachgeschlagen
+  assert.deepStrictEqual([...m.knownNow([200])], [200]);
+  assert.strictEqual(m.knownNow([200, 999]), null);
+  await m._bg;
+  assert.deepStrictEqual([...m.knownNow([200, 999])], [200]);
   const bad = new lud.Manifest({ dataDir: tmpDir('lud'), fetch: fakeFetch(() => ({ status: 500 })), now: () => t });
   assert.strictEqual((await bad.refresh()).error, 'HTTP 500');
   assert.strictEqual((await bad.lookup([1])).size, 0);

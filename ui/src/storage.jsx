@@ -104,7 +104,7 @@ export function StorageTab({ d }) {
                       <div className="grow"><div className="list-row-title">{tx.title}</div><div className="list-row-sub" title={tx.sub}>{tx.sub}</div></div>
                       {f.bytes > 0 && <b className="st-num">{gb(f.bytes)}</b>}
                       <div className="row-tight">
-                        {f.actions.includes('backup') && g && <Btn className="xs ghost" icon={Save} onClick={() => backupNow(g)} title={t('Back up the saves first')}>Back up saves</Btn>}
+                        {f.actions.includes('backup') && g && g.savesKnown !== false && <Btn className="xs ghost" icon={Save} onClick={() => backupNow(g)} title={t('Back up the saves first')}>Back up saves</Btn>}
                         {f.actions.includes('details') && <Btn className="xs ghost" icon={Gamepad2} onClick={() => steam('details', f.appid)}>Show in Steam</Btn>}
                         {f.actions.includes('move') && <InfoTip title="Move to the SSD" icon={MoveRight} pop>{t('In Steam: right-click the game → Properties → Installed files → Move install folder, then choose the library on {to}.', { to: f.to })}</InfoTip>}
                         {f.actions.includes('uninstall') && <Btn className="xs danger" icon={Trash2} onClick={() => uninstall(g || { appid: f.appid, name: f.name })}>Uninstall …</Btn>}

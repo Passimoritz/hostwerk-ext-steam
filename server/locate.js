@@ -26,12 +26,13 @@ function parseRegQuery(out) {
   return vals;
 }
 
-/** reg query ohne Shell; leere Antwort bei Fehlern (Schlüssel fehlt, kein Windows). */
-function regQuery(key, { exec = execFile, timeout = 4000 } = {}) {
+/** reg query ohne Shell; leere Antwort bei Fehlern (Schlüssel fehlt, kein Windows, Zeit abgelaufen) – strict: null statt {}. */
+function regQuery(key, { exec = execFile, timeout = 4000, strict = false } = {}) {
+  const fail = strict ? null : {};
   return new Promise((resolve) => {
     try {
-      exec('reg', ['query', key], { windowsHide: true, timeout }, (err, stdout) => resolve(err ? {} : parseRegQuery(stdout)));
-    } catch { resolve({}); }
+      exec('reg', ['query', key], { windowsHide: true, timeout }, (err, stdout) => resolve(err ? fail : parseRegQuery(stdout)));
+    } catch { resolve(fail); }
   });
 }
 
@@ -73,9 +74,16 @@ function candidates({ platform = process.platform, env = process.env, home = os.
 async function findSteam(io = {}) {
   const platform = io.platform || process.platform;
   const fsx = io.fs || fs;
+  // Eigener Ordner aus den Einstellungen gültig? Dann ohne Registry (reg.exe braucht auf vollen Rechnern Sekunden)
+  if (io.custom) {
+    let dir = io.custom;
+    try { dir = fsx.realpathSync(dir); } catch { /* unten geprüft */ }
+    if (isSteamDir(dir, fsx)) return { root: dir, source: 'custom', platform };
+  }
   let reg = {};
   if (platform === 'win32') {
-    reg = io.reg ? await io.reg() : { ...(await regQuery('HKLM\\SOFTWARE\\WOW6432Node\\Valve\\Steam')), ...(await regQuery('HKCU\\Software\\Valve\\Steam')) };
+    if (io.reg) reg = await io.reg();
+    else { const [lm, cu] = await Promise.all([regQuery('HKLM\\SOFTWARE\\WOW6432Node\\Valve\\Steam'), regQuery('HKCU\\Software\\Valve\\Steam')]); reg = { ...lm, ...cu }; }
   }
   for (const c of candidates({ platform, env: io.env || process.env, home: io.home || os.homedir(), reg, custom: io.custom })) {
     let dir = c.dir;
@@ -94,10 +102,12 @@ async function runState(io = {}) {
   const platform = io.platform || process.platform;
   const alive = io.alive || ((pid) => { try { process.kill(pid, 0); return true; } catch (e) { return e.code === 'EPERM'; } });
   if (platform === 'win32') {
-    const q = io.reg || regQuery;
-    const main = await q('HKCU\\Software\\Valve\\Steam');
-    const act = await q('HKCU\\Software\\Valve\\Steam\\ActiveProcess');
-    const pid = Number(act.pid) || 0;
+    const q = io.reg || ((key) => regQuery(key, { strict: true, timeout: 10000 }));
+    const [main, act] = await Promise.all([q('HKCU\\Software\\Valve\\Steam'), q('HKCU\\Software\\Valve\\Steam\\ActiveProcess')]);
+    // Registry nicht lesbar (z. B. Zeit abgelaufen): Zustand unbekannt – nicht „Spiel beendet“ melden (das löste sonst
+    // mitten im Spiel eine Sicherung und eine neue Sitzung aus)
+    if (!main) throw new Error('Steam registry not readable');
+    const pid = Number((act || {}).pid) || 0;
     const running = pid > 0 && alive(pid);
     return { running, pid: running ? pid : 0, appId: running ? Number(main.RunningAppID) || 0 : 0 };
   }

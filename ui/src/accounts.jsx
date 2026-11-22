@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { KeyRound, LogIn, RefreshCw, Trash2, Play, FolderOpen, ExternalLink, Download, CheckCircle2, CircleAlert, Store } from 'lucide-react';
+import { KeyRound, LogIn, RefreshCw, Trash2, Play, FolderOpen, ExternalLink, Download, CheckCircle2, CircleAlert, Store, ChevronDown, ChevronRight } from 'lucide-react';
 import { useApi, get, post, put, del, openExternal } from '@hostwerk/api';
 import { Btn, Seg, Field, Empty, Loading, InfoTip, toast, confirmDialog } from '@hostwerk/ui';
 import { t } from '@hostwerk/i18n';
-import { hours, ago, steam } from './common';
+import { hours, ago, steam, useRemembered } from './common';
 
 /*
  * Spielebibliothek 2.0, Reiter „Konten“ und „Weitere Spiele“: Steam-Anmeldung (OpenID) mit eigenem Web-API-Schlüssel,
@@ -101,9 +101,12 @@ export function AccountsTab() {
 }
 
 /** Unter der Bibliothek: gekauft, aber nicht installiert (Steam-Konto) und Spiele aus anderen Shops. */
-export function OtherGames() {
+/** q = search of the library: matching games from here show too (bought but not installed), the list opens by itself. */
+export function OtherGames({ q = '' }) {
   const a = useApi('/steam/accounts');
   const [store, setStore] = useState('all');
+  // Collapsible (remembered): on small windows the cover grid above keeps its room
+  const [open, setOpen] = useRemembered('steam:otherOpen', true);
   const x = a.data;
   const list = useMemo(() => {
     if (!x) return [];
@@ -111,8 +114,12 @@ export function OtherGames() {
     return [...(x.others || []), ...owned];
   }, [x]);
   if (!list.length) return null;
-  const stores = ['all', ...['epic', 'gog', 'itch', 'steam'].filter((s) => list.some((g) => g.store === s))];
-  const shown = store === 'all' ? list : list.filter((g) => g.store === store);
+  const s = q.trim().toLowerCase();
+  const found = s ? list.filter((g) => String(g.name || '').toLowerCase().includes(s) || String(g.id) === s) : list;
+  if (s && !found.length) return null;
+  const expanded = open || !!s;
+  const stores = ['all', ...['epic', 'gog', 'itch', 'steam'].filter((x) => found.some((g) => g.store === x))];
+  const shown = store === 'all' ? found : found.filter((g) => g.store === store);
   const act = async (g, what) => {
     try {
       if (g.store === 'steam') await steam('install', g.appid);
@@ -123,10 +130,13 @@ export function OtherGames() {
   return (
     <section className="card st-other" aria-labelledby="st-other-h">
       <div className="card-head">
-        <Store size={16} aria-hidden="true" /><h3 id="st-other-h">More games</h3><span className="small muted">{t('{n} games', { n: list.length })}</span>
-        {stores.length > 2 && <div className="right"><Seg value={store} onChange={setStore} options={stores.map((s) => ({ id: s, label: s === 'all' ? 'All' : STORE[s] }))} /></div>}
+        <button type="button" className="st-other-toggle" aria-expanded={expanded} aria-controls="st-other-list" disabled={!!s} onClick={() => setOpen(!open)} title={expanded ? t('Collapse') : t('Expand')}>
+          {expanded ? <ChevronDown size={16} aria-hidden="true" /> : <ChevronRight size={16} aria-hidden="true" />}<Store size={16} aria-hidden="true" /><h3 id="st-other-h">More games</h3>
+        </button>
+        <span className="small muted">{s ? t('{n} of {total} games match', { n: found.length, total: list.length }) : t('{n} games', { n: list.length })}</span>
+        {expanded && stores.length > 2 && <div className="right"><Seg value={store} onChange={setStore} options={stores.map((x) => ({ id: x, label: x === 'all' ? 'All' : STORE[x] }))} /></div>}
       </div>
-      <div className="st-other-list">
+      {expanded && <div className="st-other-list" id="st-other-list">
         {shown.slice(0, 300).map((g) => (
           <div key={`${g.store}:${g.id}`} className="list-item st-other-row">
             <span className="badge">{STORE[g.store]}</span>
@@ -138,7 +148,7 @@ export function OtherGames() {
             {g.store === 'itch' && g.url && <Btn className="xs ghost" icon={ExternalLink} onClick={() => act(g)}>itch.io</Btn>}
           </div>
         ))}
-      </div>
+      </div>}
     </section>
   );
 }

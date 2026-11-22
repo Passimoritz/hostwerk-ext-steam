@@ -16,12 +16,12 @@
 .st-statbar { flex-wrap: wrap; gap: var(--sp-2); }
 .st-hints { display: flex; flex-direction: column; gap: var(--sp-2); }
 
-/* Bilder: Initialen als Rückfall (Farbton aus dem Namen) */
+.st-art { display: block; overflow: hidden; background: var(--surface-3); }
+.st-art img { width: 100%; height: 100%; display: block; }
+/* Bilder: Initialen als Rückfall (Farbton aus dem Namen) – nach .st-art, weil der Platzhalter dieselben Klassen trägt */
 /* hostwerk-allow: colors – Farbton je Spiel aus dem Namen, damit Platzhalter unterscheidbar bleiben */
 .st-mono { display: grid; place-items: center; font-weight: 700; letter-spacing: .02em; font-size: var(--fs-xl); color: hsl(var(--h) 60% 36%); background: linear-gradient(140deg, hsl(var(--h) 70% 55% / .26), hsl(calc(var(--h) + 45) 70% 50% / .12)); }
 [data-theme='dark'] .st-mono { color: hsl(var(--h) 75% 74%); }
-.st-art { display: block; overflow: hidden; background: var(--surface-3); }
-.st-art img { width: 100%; height: 100%; display: block; }
 .st-art-portrait { aspect-ratio: 2 / 3; }
 .st-art-header { aspect-ratio: 460 / 215; }
 
@@ -34,7 +34,7 @@
 .st-tile-art .st-art { width: 100%; }
 .st-tile:hover .st-tile-art { transform: translateY(-2px); box-shadow: 0 6px 18px var(--shadow, rgb(0 0 0 / .18)); }
 .st-tile-live .st-tile-art { box-shadow: 0 0 0 2px var(--ok); }
-.st-tile-badge { position: absolute; left: var(--sp-1); top: var(--sp-1); max-width: calc(100% - 8px); }
+.st-tile-badge { position: absolute; left: var(--sp-1); top: var(--sp-1); max-width: calc(100% - 8px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .st-tile-server { position: absolute; right: var(--sp-1); top: var(--sp-1); display: grid; place-items: center; width: 24px; height: 24px; border-radius: var(--r-pill); background: var(--surface); color: var(--accent); box-shadow: 0 0 0 1px var(--line); }
 .st-tile-progress { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: linear-gradient(90deg, var(--accent) var(--p), var(--surface-3) var(--p)); }
 .st-tile-name { font-weight: 600; font-size: var(--fs-sm); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: var(--sp-1); }
@@ -73,7 +73,8 @@
 .st-md-search { margin-bottom: var(--sp-1); }
 .st-md-art { width: 26px; flex-shrink: 0; border-radius: var(--r-sm); font-size: var(--fs-2xs); }
 @media (max-width: 900px) { .st-md { grid-template-columns: minmax(0, 1fr); height: auto !important; } .st-md-list { max-height: 260px; } }
-.st-savehead { align-items: center; }
+.st-savehead { align-items: center; flex-wrap: wrap; }
+.st-savehead > .grow { min-width: 12rem; }
 .st-savehead-art { width: 140px; border-radius: var(--r-md); flex-shrink: 0; }
 .st-places { display: flex; flex-direction: column; gap: var(--sp-1); }
 .st-code { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--fs-xs); }
@@ -131,3 +132,8 @@
 .st-other-list { display: flex; flex-direction: column; max-height: 480px; overflow: auto; }
 .st-other-row { display: flex; align-items: center; gap: var(--sp-2); min-width: 0; }
 .st-other-row .ellipsis { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* „Weitere Spiele“ einklappbar: die Kopfzeile ist der Schalter */
+.st-other-toggle { display: inline-flex; align-items: center; gap: var(--sp-2); padding: 0; border: 0; background: none; color: inherit; font: inherit; cursor: pointer; min-height: 28px; }
+.st-other-toggle:disabled { cursor: default; }
+.st-other-toggle h3 { margin: 0; }
+.st-other-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: var(--r-sm); }

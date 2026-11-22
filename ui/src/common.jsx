@@ -44,7 +44,11 @@ export function hours(min) {
   const m = Number(min) || 0;
   if (m < 60) return t('{n} min', { n: m });
   const h = m / 60;
-  return t('{n} h', { n: h >= 10 ? Math.round(h) : Math.round(h * 10) / 10 });
+  // Zahl in der Sprache der Oberfläche („3,7 Std.“ / „3.7 h“, „1.164 Std.“)
+  const n = h >= 10 ? Math.round(h) : Math.round(h * 10) / 10;
+  let s = String(n);
+  try { s = new Intl.NumberFormat(document.documentElement.lang || undefined).format(n); } catch { /* String(n) */ }
+  return t('{n} h', { n: s });
 }
 
 /** Zeitpunkt → „heute“, „gestern“, „vor 5 Tagen“, „vor 3 Monaten“ */

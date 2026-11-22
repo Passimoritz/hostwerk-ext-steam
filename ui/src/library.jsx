@@ -8,6 +8,7 @@ import { contextMenu } from '@hostwerk/kit';
 import { t, pl } from '@hostwerk/i18n';
 import { Art, hours, ago, gb, steam, openFolder, startServer, Sheet, StatBar, STATE_TEXT, money, useRemembered, go } from './common';
 import { useFill } from './fill';
+import { OtherGames } from './accounts';
 
 /* Reiter „Bibliothek“: Kennzahlen, Suche/Sortierung, Cover-Raster (scrollt in sich), Details im Seitenblatt. */
 
@@ -31,7 +32,8 @@ export function gameMenu(e, g, { onOpen, serversAvailable }) {
     { label: t('Show in Steam'), icon: ExternalLink, onClick: () => steam('details', g.appid) },
     { label: t('Open game folder'), icon: FolderOpen, onClick: () => openFolder('game', g.appid) },
     ...(g.server && serversAvailable ? [{ label: t('Start own server …'), icon: Server, onClick: () => startServer(g) }] : []),
-    { label: t('Back up saves now'), icon: Save, onClick: () => backupNow(g) },
+    ...(g.savesKnown !== false ? [{ label: t('Back up saves now'), icon: Save, onClick: () => backupNow(g) }] : []),
+    { label: t('Check files …'), icon: Wrench, onClick: () => steam('validate', g.appid) },
     '-',
     { label: t('Uninstall in Steam …'), icon: Trash2, danger: true, onClick: () => uninstall(g) },
   ]);
@@ -96,7 +98,7 @@ export function GameSheet({ g, onClose, serversAvailable }) {
       <div className="row-tight st-wrap">
         <Btn className="sm" icon={ExternalLink} onClick={() => steam('details', g.appid)}>Show in Steam</Btn>
         <Btn className="sm" icon={FolderOpen} onClick={() => openFolder('game', g.appid)}>Open game folder</Btn>
-        <Btn className="sm" icon={Save} onClick={() => backupNow(g)}>Back up saves now</Btn>
+        <Btn className="sm" icon={Save} disabled={g.savesKnown === false} title={g.savesKnown === false ? t('Where this game saves is not known yet') : undefined} onClick={() => backupNow(g)}>Back up saves now</Btn>
         <Btn className="sm ghost" icon={Wrench} onClick={() => steam('validate', g.appid)} title={t('Steam checks the game files and repairs missing ones')}>Check files …</Btn>
       </div>
       {g.server && serversAvailable && (
@@ -147,12 +149,13 @@ export function LibraryTab({ d }) {
         <Seg value={sort} onChange={setSort} options={SORTS.map((x) => ({ ...x, label: t(x.label) }))} />
       </div>
       <div ref={fill} className="st-grid-wrap fill-scroll">
-        {shown.length === 0 ? <TileEmpty icon={q ? Search : CircleAlert} text={q ? t('Nothing found.') : t('No games in this view.')} /> : (
+        {shown.length === 0 ? <TileEmpty icon={q ? Search : CircleAlert} text={q ? t('No installed game found.') : t('No games in this view.')} /> : (
           <div className="st-grid">
             {shown.map((g) => <Tile key={g.appid} g={g} onOpen={() => setOpen(g.appid)} serversAvailable={d.serversAvailable} />)}
           </div>
         )}
       </div>
+      <OtherGames q={q} />
       {cur && <GameSheet g={cur} onClose={() => setOpen(null)} serversAvailable={d.serversAvailable} />}
     </>
   );

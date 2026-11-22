@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Gamepad2, HardDrive, Save, Tag, BarChart3, Image as ImageIcon, Dices, RefreshCw, Library, Settings, Server, Download, Play, Users, CircleOff, KeyRound } from 'lucide-react';
 import { useApi, put, post } from '@hostwerk/api';
-import { Btn, Tabs, Empty, Loading, TileEmpty, InfoTip, Progress, toast } from '@hostwerk/ui';
+import { Btn, Tabs, Empty, Loading, TileEmpty, InfoTip, Progress, Callout, toast } from '@hostwerk/ui';
 import { t, pl } from '@hostwerk/i18n';
 import { BASE, go, Art, hours, ago, gb, steam, startServer } from './common';
 import { LibraryTab } from './library';
@@ -11,6 +11,7 @@ import { DealsTab } from './deals';
 import { StatsTab, ShotsTab } from './stats';
 import { PicksSheet } from './picks';
 import { AccountsTab, OtherGames } from './accounts';
+import { SteamFolderCheck } from './folder';
 import './style.css';
 
 /*
@@ -32,7 +33,7 @@ function NotFound({ d, reload }) {
   return (
     <Empty icon={CircleOff} title="Steam was not found on this PC"
       text={d.platform === 'linux' ? 'Hostwerk looked in ~/.steam, ~/.local/share/Steam, Flatpak and Snap. Installed somewhere else? Enter the folder in the extension’s settings.' : 'Hostwerk looked in the registry and in the usual folders. Installed somewhere else? Enter the folder in the extension’s settings.'}
-      action={<><a className="btn" href="#/settings/erweiterungen"><Settings size={14} aria-hidden="true" />{t('Settings')}</a> <Btn icon={RefreshCw} onClick={reload}>Search again</Btn> <Btn icon={KeyRound} onClick={() => go('accounts')}>Other stores and accounts</Btn></>} />
+      action={<div className="stack"><div><a className="btn" href="#/settings/erweiterungen"><Settings size={14} aria-hidden="true" />{t('Settings')}</a> <Btn icon={RefreshCw} onClick={reload}>Search again</Btn> <Btn icon={KeyRound} onClick={() => go('accounts')}>Other stores and accounts</Btn></div><SteamFolderCheck /></div>} />
   );
 }
 
@@ -80,9 +81,10 @@ export function SteamPage({ path = [] }) {
   return (
     <div className="page fade-in st-page">
       {head}
+      {x.steamPathMissing && <Callout kind="warn" icon={Settings} title="The Steam folder from the settings was not found" dismissible={false}>{t('Hostwerk uses the Steam installation it found by itself: {dir}', { dir: x.install.root })}<SteamFolderCheck /></Callout>}
       <Tabs value={tab} onChange={go} tabs={tabs} />
       <div className="st-body">
-        {tab === 'library' && <><LibraryTab d={x} /><OtherGames /></>}
+        {tab === 'library' && <LibraryTab d={x} />}
         {tab === 'accounts' && <AccountsTab />}
         {tab === 'storage' && <StorageTab d={x} />}
         {tab === 'saves' && <SavesTab />}
@@ -160,6 +162,9 @@ export default {
   slots: {
     'dashboard.tiles': [{ id: 'steam', title: 'Steam', icon: Gamepad2, size: 'third', Component: SteamTile }],
     // Bereich Spiele-Server (Erweiterung „Spiele-Server“, Hostwerk 3.0+): ältere Fassungen zeigen den Steckplatz einfach nicht
+    // Hostwerks Einstellungen → Erweitert („Von Erweiterungen“): „Prüfen“ für den Steam-Ordner – das Feld selbst steht in den
+    // Einstellungen der Erweiterung (Erweiterungen → Spielebibliothek → Einstellungen); dieselbe Prüfung auch auf der Seite
+    'settings.sections': [{ id: 'steam-folder', title: 'Steam folder (game library)', tab: 'advanced', Component: SteamFolderCheck }],
     'games.tabs': [{ id: 'your-games', title: 'Your games', icon: Gamepad2, Component: YourGamesTab, order: 30 }],
   },
 };

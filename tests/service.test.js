@@ -13,7 +13,7 @@ const { fakeSteam, tmpDir, cleanup, write, fakeFetch } = require('./helpers');
 process.env.HW_TEST = '1';
 test.after(cleanup);
 
-function setup({ manifest = true, run = { running: true, appId: 0 } } = {}) {
+function setup({ manifest = true, run = { running: true, appId: 0 }, settings = { autoBackup: true } } = {}) {
   const f = fakeSteam();
   const data = tmpDir('data');
   const saveDir = path.join(f.base, 'Saves', 'Cube');
@@ -27,7 +27,7 @@ function setup({ manifest = true, run = { running: true, appId: 0 } } = {}) {
   const notes = [];
   const host = {
     id: 'steam',
-    ctx: { paths: { data }, extMarket: { settingsFor: () => ({ autoBackup: true }) } },
+    ctx: { paths: { data }, extMarket: { settingsFor: () => settings } },
     t: (s, v) => (v ? String(s).replace(/\{(\w+)\}/g, (m, k) => (v[k] !== undefined ? v[k] : m)) : s),
     error: (status, text) => Object.assign(new Error(text), { status }),
     broadcast: () => {},
@@ -55,6 +55,20 @@ test('Ansicht: Bibliothek, Summen, ohne Spiele-Server keine Server-Treffer', asy
   assert.strictEqual(v.totals.downloads, 1);
   assert.strictEqual(v.serversAvailable, false);
   assert.ok(v.games.find((g) => g.appid === 228980).tool);
+});
+
+test('Eigener Steam-Ordner nicht gefunden → Ansicht meldet es (statt still die automatisch gefundene Installation zu nutzen)', async () => {
+  const { svc } = setup();
+  assert.strictEqual((await svc.view()).steamPathMissing, false, 'ohne eigenen Ordner keine Meldung');
+  const other = setup({ settings: { autoBackup: true, steamPath: 'C:/gibt/es/nicht' } });
+  assert.strictEqual((await other.svc.view()).steamPathMissing, true);
+});
+
+test('Spielzeit: Ausgangsstand wird schon beim ersten Lesen gespeichert (übersteht einen Neustart)', async () => {
+  const { svc, data } = setup();
+  await svc.scan();
+  const saved = JSON.parse(fs.readFileSync(path.join(data, 'playtime.json'), 'utf8'));
+  assert.ok(saved.last && Object.keys(saved.last).length > 0, 'Ausgangsstand gespeichert');
 });
 
 test('Spielsitzung endet → Spielstände automatisch gesichert, Sitzung gebucht', async () => {
@@ -127,4 +141,21 @@ test('Routen: angemeldet, steam://-Links nur aus der festen Liste', async () => 
   let err = null;
   await routes['POST /steam/open']({ body: { action: 'exec', appid: 1 } }, { json: () => {} }, (e) => { err = e; });
   assert.strictEqual(err.status, 400);
+});
+
+test('Steam-Ordner prüfen: leer = automatisch gefunden, eigener Ordner mit Steam, fehlender Ordner, Ordner ohne Steam', async () => {
+  const auto = setup();
+  const a = await auto.svc.checkFolder();
+  assert.strictEqual(a.ok, true);
+  assert.strictEqual(a.custom, '');
+  assert.strictEqual(a.games, 4);
+  assert.ok(a.libraries >= 1);
+  const own = setup({ settings: { steamPath: auto.f.root } });
+  const o = await own.svc.checkFolder();
+  assert.strictEqual(o.ok, true);
+  assert.strictEqual(o.source, 'custom');
+  assert.deepStrictEqual(await setup({ settings: { steamPath: 'C:/gibt/es/nicht' } }).svc.checkFolder(), { custom: 'C:/gibt/es/nicht', ok: false, reason: 'missing' });
+  const empty = tmpDir('kein-steam');
+  fs.mkdirSync(empty, { recursive: true });
+  assert.strictEqual((await setup({ settings: { steamPath: empty } }).svc.checkFolder()).reason, 'not-steam');
 });

@@ -77,6 +77,7 @@ function routes(host, svc) {
     if (!url) throw host.error(400, 'Unknown Steam action');
     res.json({ ok: await svc.open(url) });
   }));
+  r.get('/steam/folder/check', wrap(async (req, res) => res.json(await svc.checkFolder())));
   r.post('/steam/folder', wrap(async (req, res) => {
     const b = req.body || {};
     const dir = svc.folderFor(String(b.kind || ''), b.id);

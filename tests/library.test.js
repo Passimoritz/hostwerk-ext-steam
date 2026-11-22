@@ -125,6 +125,8 @@ test('reg query lesen und Laufzustand (Windows-Registry, Linux registry.vdf)', a
   const reg = async (k) => (k.endsWith('ActiveProcess') ? { pid: 42 } : { RunningAppID: 434 });
   assert.deepStrictEqual(await loc.runState({ platform: 'win32', reg, alive: () => true }), { running: true, pid: 42, appId: 434 });
   assert.deepStrictEqual(await loc.runState({ platform: 'win32', reg, alive: () => false }), { running: false, pid: 0, appId: 0 });
+  // Registry nicht lesbar (Zeit abgelaufen) → Fehler statt „läuft nicht“ (sonst endete mitten im Spiel eine Sitzung)
+  await assert.rejects(loc.runState({ platform: 'win32', reg: async () => null, alive: () => true }));
   const home = tmpDir('home');
   write(path.join(home, '.steam', 'registry.vdf'), '"Registry" { "HKCU" { "Software" { "Valve" { "Steam" { "RunningAppID" "10" } } } } }');
   write(path.join(home, '.steam', 'steam.pid'), '777\n');
